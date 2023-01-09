@@ -14,7 +14,9 @@ For example for My Autarco:
 [default]
 # ...
 
-# Put your solar cloud service credentials below
+# Put your solar cloud service settings below and uncomment them
+[default.service]
+kind = "MyAutarco"
 username = "foo@domain.tld"
 password = "secret"
 site_id = "abc123de"

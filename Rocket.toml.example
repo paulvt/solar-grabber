@@ -3,6 +3,8 @@ address = "0.0.0.0"
 port = 2356
 
 # Put your solar cloud service settings below and uncomment them
+[default.service]
+# kind = "MyAutarco"
 # username = "foo@domain.tld"
 # password = "secret"
 # site_id = "abc123de"

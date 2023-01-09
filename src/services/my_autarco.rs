@@ -9,13 +9,24 @@ use rocket::async_trait;
 use serde::Deserialize;
 use url::ParseError;
 
-use crate::{Status, Config};
+use crate::Status;
 
 /// The base URL of My Autarco site.
 const BASE_URL: &str = "https://my.autarco.com";
 
 /// The interval between data polls (in seconds).
 const POLL_INTERVAL: u64 = 300;
+
+/// The configuration necessary to access the My Autarco API.
+#[derive(Debug, Deserialize)]
+pub(crate) struct Config {
+    /// The username of the account to login with
+    username: String,
+    /// The password of the account to login with
+    password: String,
+    /// The Autarco site ID to track
+    site_id: String,
+}
 
 /// Instantiates the My Autarco service.
 pub(crate) fn service(config: Config) -> Result<Service, reqwest::Error> {

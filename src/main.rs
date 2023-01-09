@@ -20,19 +20,15 @@ use serde::{Deserialize, Serialize};
 
 use self::update::update_loop;
 
-/// The configuration necessary to access a cloud service API.
-#[derive(Debug, Deserialize)]
-struct Config {
-    /// The username of the account to login with
-    username: String,
-    /// The password of the account to login with
-    password: String,
-    /// The Autarco site ID to track
-    site_id: String,
-}
-
 /// The global, concurrently accessible current status.
 static STATUS: Lazy<Mutex<Option<Status>>> = Lazy::new(|| Mutex::new(None));
+
+/// The configuration loaded additionally by Rocket.
+#[derive(Debug, Deserialize)]
+struct Config {
+    /// The service-specific configuration
+    service: services::Config,
+}
 
 /// The current photovoltaic invertor status.
 #[derive(Clone, Copy, Debug, Serialize)]
@@ -60,8 +56,11 @@ fn rocket() -> _ {
         .attach(AdHoc::config::<Config>())
         .attach(AdHoc::on_liftoff("Updater", |rocket| {
             Box::pin(async move {
-                let config = rocket.figment().extract().expect("Invalid configuration");
-                let service = services::get("my_autarco", config).expect("Invalid service");
+                let config = rocket
+                    .figment()
+                    .extract::<Config>()
+                    .expect("Invalid configuration");
+                let service = services::get(config.service).expect("Invalid service");
 
                 // We don't care about the join handle nor error results?t
                 let _ = rocket::tokio::spawn(update_loop(service));

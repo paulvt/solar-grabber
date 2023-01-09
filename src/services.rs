@@ -4,14 +4,22 @@ pub(crate) mod my_autarco;
 
 use enum_dispatch::enum_dispatch;
 use rocket::async_trait;
+use serde::Deserialize;
 
-use crate::{Status, Config};
+use crate::Status;
+
+/// The service-specific configuration necessary to access a cloud service API.
+#[derive(Debug, Deserialize)]
+#[serde(crate = "rocket::serde", tag = "kind")]
+pub(crate) enum Config {
+    /// The configuration of the My Autarco service
+    MyAutarco(my_autarco::Config),
+}
 
 /// Retrieves the service for the provided name (if supported).
-pub(crate) fn get(service: &str, config: Config) -> color_eyre::Result<Services> {
-    match service {
-        "my_autarco" => Ok(Services::MyAutarco(my_autarco::service(config)?)),
-        _ => panic!("Unsupported service: {service}"),
+pub(crate) fn get(config: Config) -> color_eyre::Result<Services> {
+    match config {
+        Config::MyAutarco(config) => Ok(Services::MyAutarco(my_autarco::service(config)?)),
     }
 }
 
