@@ -1,5 +1,6 @@
 //! The supported cloud services.
 
+pub(crate) mod hoymiles;
 pub(crate) mod my_autarco;
 
 use enum_dispatch::enum_dispatch;
@@ -12,13 +13,16 @@ use crate::Status;
 #[derive(Debug, Deserialize)]
 #[serde(crate = "rocket::serde", tag = "kind")]
 pub(crate) enum Config {
-    /// The configuration of the My Autarco service
+    /// Hoymiles (<https://global.hoymiles.com>)
+    Hoymiles(hoymiles::Config),
+    /// My Autarco (<https://my.autarco.com>)
     MyAutarco(my_autarco::Config),
 }
 
 /// Retrieves the service for the provided name (if supported).
 pub(crate) fn get(config: Config) -> color_eyre::Result<Services> {
     match config {
+        Config::Hoymiles(config) => Ok(Services::Hoymiles(hoymiles::service(config)?)),
         Config::MyAutarco(config) => Ok(Services::MyAutarco(my_autarco::service(config)?)),
     }
 }
@@ -26,6 +30,8 @@ pub(crate) fn get(config: Config) -> color_eyre::Result<Services> {
 /// The supported cloud services.
 #[enum_dispatch(Service)]
 pub(crate) enum Services {
+    /// Hoymiles (<https://global.hoymiles.com>)
+    Hoymiles(hoymiles::Service),
     /// My Autarco (<https://my.autarco.com>)
     MyAutarco(my_autarco::Service),
 }
