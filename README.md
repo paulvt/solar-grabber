@@ -101,6 +101,52 @@ This contains the current production power (`current_w`) in Watt,
 the total of produced energy since installation (`total_kwh`) in kilowatt-hour
 and the (UNIX) timestamp that indicates when the information was last updated.
 
+## Integration in Home Assistant
+
+To integrate the Solar Grabber service in your [Home Assistant](https://www.home-assistant.io/)
+installation, add the following three sensor entity definitions to your
+configuration YAML and restart:
+
+```yaml
+sensors:
+  # ...Already exiting sensor definitions...
+
+  - platform: rest
+    name: "Photovoltaic Invertor"
+    resource: "http://solar-grabber.domain.tld:2399"
+    json_attributes:
+      - current_w
+      - total_kwh
+      - last_updated
+    value_template: >
+      {% if value_json["current_w"] == 0 %}
+        off
+      {% elif value_json["current_w"] > 0 %}
+        on
+      {% endif %}
+
+  - platform: rest
+    name: "Photovoltaic Invertor Power Production"
+    resource: "http://solar-grabber.domain.tld:8066"
+    value_template: '{{ value_json.current_w }}'
+    unit_of_measurement: W
+    device_class: power
+
+  - platform: rest
+    name: "Photovoltaic Invertor Total Energy Production"
+    resource: "http://solar-grabber.domain.tld:8066"
+    value_template: '{{ value_json.total_kwh }}'
+    unit_of_measurement: kWh
+    device_class: energy
+```
+
+This assumes your Solar Grabber is running at <http://solar-grabber.domain.tld:2399>.
+Replace this with the URL where Solar Grabber is actually running.
+Also, feel free to change the names of the sensor entities.
+
+These sensors use the RESTful sensor integration, for more information see the
+[RESTful sensor documentation](https://www.home-assistant.io/integrations/sensor.rest/).
+
 ## License
 
 Solar Grabber is licensed under the MIT license (see the `LICENSE` file or
