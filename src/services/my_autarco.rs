@@ -119,8 +119,8 @@ impl super::Service for Service {
         };
 
         Ok(Status {
-            current_w: api_power.pv_now,
-            total_kwh: api_energy.pv_to_date,
+            current_w: api_power.pv_now as f32,
+            total_kwh: api_energy.pv_to_date as f32,
             last_updated,
         })
     }

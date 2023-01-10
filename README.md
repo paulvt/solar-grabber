@@ -3,18 +3,24 @@
 Solar Grabber is a web service that provides a REST API layer over various
 cloud sites/services/APIs to get statistical data of your solar panels.
 
+The services that are currently supported are
+[Hoymiles](https://global.hoymiles.com) and
+[My Autarco](https://my.autarco.com).
+
 ## Building & running
 
 First, you need to provide settings in the file `Rocket.toml` by setting the
 username, password and other cloud service-specific settings.
-You can copy and modify `Rocket.toml.example` for this.
-For example for My Autarco:
+You can copy and modify `Rocket.toml.example` for this and uncomment the part
+relevant for the service you want to use.
+For example, to configure Solar Grabber to use the My Autarco service:
 
 ```toml
 [default]
 # ...
 
-# Put your solar cloud service settings below and uncomment them
+# Put your solar cloud service settings below and uncomment them based on the
+# service you want to use.
 [default.service]
 kind = "MyAutarco"
 username = "foo@domain.tld"
@@ -62,7 +68,7 @@ GET /
 A response uses the JSON format and typically looks like this:
 
 ```json
-{"current_w":23,"total_kwh":6159,"last_updated":1661194620}
+{"current_w":23.0,"total_kwh":6159.0,"last_updated":1661194620}
 ```
 
 This contains the current production power (`current_w`) in Watt,
