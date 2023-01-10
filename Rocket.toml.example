@@ -2,8 +2,16 @@
 address = "0.0.0.0"
 port = 2356
 
-# Put your solar cloud service settings below and uncomment them
+# Put your solar cloud service settings below and uncomment them based on the
+# service you want to use.
 [default.service]
+# For Hoymiles, use the following settings:
+# kind = "Hoymiles"
+# username = "username"
+# password = "secret"
+# sid = 123456
+
+# For My Autarco, use the following settings:
 # kind = "MyAutarco"
 # username = "foo@domain.tld"
 # password = "secret"
