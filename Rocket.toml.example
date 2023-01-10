@@ -1,6 +1,6 @@
 [default]
 address = "0.0.0.0"
-port = 2356
+port = 2399
 
 # Put your solar cloud service settings below and uncomment them based on the
 # service you want to use.
