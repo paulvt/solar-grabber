@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  server:
+    image: solar-grabber:latest
+    build: .
+    restart: unless-stopped
+    ports:
+      - 2399:8000
+    # Use a `Rocket.toml` or configure the credentials using environment variables below
+    volumes:
+      - ./Rocket.toml:/app/Rocket.toml
+    environment:
+      ROCKET_LOG_LEVEL: normal  # Available levels are: off, debug, normal, critical
+      # For My Autarco, use the these variabels and uncomment them
+      # ROCKET_KIND: MyAutarco
+      # ROCKET_USERNAME: foo@domain.tld
+      # ROCKET_PASSWORD: secret
+      # ROCKET_SITE_ID: abc123de
+      # For Hoymiles, use the these variabels and uncomment them
+      # ROCKET_KIND: HoyMiles
+      # ROCKET_USERNAME: foo@domain.tld
+      # ROCKET_PASSWORD: secret
+      # ROCKET_SID: 123456
+    shm_size: '2gb'
