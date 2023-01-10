@@ -21,3 +21,29 @@ rocket = { version = "0.5.0-rc.2", features = ["json"] }
 serde = "1.0.116"
 toml = "0.5.6"
 url = "2.2.2"
+
+[package.metadata.deb]
+maintainer = "Paul van Tilburg <paul@luon.net>"
+copyright = "2022, Paul van Tilburg"
+depends = "$auto, systemd"
+extended-description = """\
+Solar Grabber is web service that provides a REST API layer over various cloud
+sites/services/APIs to get statistical data of your solar panels.
+
+It currently supports the following services:
+
+* Hoymiles: https://global.hoymiles.com
+* My Autarco: https://my.autarco.com
+"""
+section = "net"
+priority = "optional"
+assets = [
+  ["README.md", "usr/share/doc/solar-grabber/", "664"],
+  ["Rocket.toml.example", "/etc/solar-grabber.toml", "600"],
+  ["target/release/solar-grabber", "usr/sbin/solar-grabber", "755"]
+]
+conf-files = [
+  "/etc/solar-grabber.toml"
+]
+maintainer-scripts = "debian/"
+systemd-units = { unit-name = "solar-grabber" }
