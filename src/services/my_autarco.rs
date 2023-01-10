@@ -2,7 +2,7 @@
 //!
 //! It uses the private My Autarco API to login (and obtain the session cookies) and
 //! to retrieve the energy data (using the session cookies).
-//! See also: <https://my.autarco.com>
+//! See also: <https://my.autarco.com>.
 
 use reqwest::{Client, ClientBuilder, Url};
 use rocket::async_trait;
@@ -92,7 +92,6 @@ impl super::Service for Service {
             ("password", &self.config.password),
         ];
         let login_url = login_url().expect("valid login URL");
-
         self.client.post(login_url).form(&params).send().await?;
 
         Ok(())
@@ -100,21 +99,21 @@ impl super::Service for Service {
 
     /// Retrieves a status update from the API of the My Autarco site.
     ///
-    /// It needs the cookie from the login to be able to perform the action. It uses both the `energy`
-    /// and `power` endpoint to construct the [`Status`] struct.
+    /// It needs the cookie from the login to be able to perform the action. It uses both the
+    /// `energy` and `power` endpoint to construct the [`Status`] struct.
     async fn update(&self, last_updated: u64) -> Result<Status, reqwest::Error> {
         // Retrieve the data from the API endpoints.
         let api_energy_url = api_url(&self.config.site_id, "energy").expect("valid API energy URL");
         let api_response = self.client.get(api_energy_url).send().await?;
-        let api_energy: ApiEnergy = match api_response.error_for_status() {
-            Ok(res) => res.json().await?,
+        let api_energy = match api_response.error_for_status() {
+            Ok(res) => res.json::<ApiEnergy>().await?,
             Err(err) => return Err(err),
         };
 
         let api_power_url = api_url(&self.config.site_id, "power").expect("valid API power URL");
         let api_response = self.client.get(api_power_url).send().await?;
-        let api_power: ApiPower = match api_response.error_for_status() {
-            Ok(res) => res.json().await?,
+        let api_power = match api_response.error_for_status() {
+            Ok(res) => res.json::<ApiPower>().await?,
             Err(err) => return Err(err),
         };
 
