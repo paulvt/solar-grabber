@@ -41,9 +41,9 @@ struct Config {
 #[derive(Clone, Copy, Debug, Serialize)]
 struct Status {
     /// Current power production (W)
-    current_w: u32,
+    current_w: f32,
     /// Total energy produced since installation (kWh)
-    total_kwh: u32,
+    total_kwh: f32,
     /// Timestamp of last update
     last_updated: u64,
 }
