@@ -71,7 +71,7 @@ To use Docker directly, run to build an image and the run it:
 ```console
 $ docker build --rm --tag solar-grabber:latest .
 ...
-$ docker run --rm -v ./Rocket.toml:/app/Rocket.toml -p 2399:8000 solar-grabber-latest
+$ docker run --rm -v ./Rocket.toml:/app/Rocket.toml -p 2399:8000 solar-grabber:latest
 ...
 ```
 
