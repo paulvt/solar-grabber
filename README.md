@@ -127,14 +127,14 @@ sensors:
 
   - platform: rest
     name: "Photovoltaic Invertor Power Production"
-    resource: "http://solar-grabber.domain.tld:8066"
+    resource: "http://solar-grabber.domain.tld:2399"
     value_template: '{{ value_json.current_w }}'
     unit_of_measurement: W
     device_class: power
 
   - platform: rest
     name: "Photovoltaic Invertor Total Energy Production"
-    resource: "http://solar-grabber.domain.tld:8066"
+    resource: "http://solar-grabber.domain.tld:2399"
     value_template: '{{ value_json.total_kwh }}'
     unit_of_measurement: kWh
     device_class: energy
