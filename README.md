@@ -43,7 +43,7 @@ port = 2399
 This will work independent of the type of build. For more about Rocket's
 configuration, see: <https://rocket.rs/v0.5-rc/guide/configuration/>.
 
-### Using cargo
+### Using Cargo
 
 Using Cargo it is easy to build and run Solar Grabber. just run:
 
@@ -57,7 +57,7 @@ $ cargo run --release
 
 ### Using Docker (Compose)
 
-Using `docker-compose` it is easy (to build and) run using a Docker image.
+Using Docker Compose it is easy (to build and) run using a Docker image.
 If you do not change `docker-compose.yml` it will use `Rocket.toml` from
 the current working directory as configuration:
 
@@ -66,7 +66,10 @@ $ docker-compose up
 ...
 ```
 
-To use Docker directly, run to build an image and the run it:
+Ensure that `Rocket.toml` listens on address `0.0.0.0` port `8000` for the
+exposing of the container port to the outside to work!
+
+Alternatively, to use Docker directly, run to build an image and the run it:
 
 ```console
 $ docker build --rm --tag solar-grabber:latest .

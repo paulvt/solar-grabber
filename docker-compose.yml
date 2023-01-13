@@ -6,9 +6,10 @@ services:
     build: .
     restart: unless-stopped
     ports:
+      # Ensure that Rocket listens on 0.0.0.0, port 8000 for this!
       - 2399:8000
-    # Use a `Rocket.toml` or configure the credentials using environment variables below
     volumes:
+      # Use a `Rocket.toml` or configure the credentials using environment variables below
       - ./Rocket.toml:/app/Rocket.toml
     environment:
       ROCKET_LOG_LEVEL: normal  # Available levels are: off, debug, normal, critical
