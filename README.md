@@ -134,6 +134,7 @@ sensors:
     value_template: '{{ value_json.current_w }}'
     unit_of_measurement: W
     device_class: power
+    state_class: measurement
 
   - platform: rest
     name: "Photovoltaic Invertor Total Energy Production"
@@ -141,6 +142,7 @@ sensors:
     value_template: '{{ value_json.total_kwh }}'
     unit_of_measurement: kWh
     device_class: energy
+    state_class: total_increasing
 ```
 
 This assumes your Solar Grabber is running at <http://solar-grabber.domain.tld:2399>.
