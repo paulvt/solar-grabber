@@ -199,7 +199,12 @@ impl super::Service for Service {
         let base_url = Url::parse(BASE_URL).expect("valid base URL");
         let login_url = login_url().expect("valid login URL");
         let login_request = ApiLoginRequest::new(&self.config.username, &self.config.password);
-        let login_response = self.client.post(login_url).json(&login_request).send().await?;
+        let login_response = self
+            .client
+            .post(login_url)
+            .json(&login_request)
+            .send()
+            .await?;
         let login_response_data = match login_response.error_for_status() {
             Ok(res) => res.json::<ApiLoginResponse>().await?.data,
             Err(err) => return Err(err),
@@ -219,7 +224,12 @@ impl super::Service for Service {
     async fn update(&self, last_updated: u64) -> Result<Status, reqwest::Error> {
         let api_url = api_url().expect("valid API power URL");
         let api_data_request = ApiDataRequest::new(self.config.sid);
-        let api_response = self.client.post(api_url).json(&api_data_request).send().await?;
+        let api_response = self
+            .client
+            .post(api_url)
+            .json(&api_data_request)
+            .send()
+            .await?;
         let api_data = match api_response.error_for_status() {
             Ok(res) => res.json::<ApiDataResponse>().await?.data,
             Err(err) => return Err(err),
