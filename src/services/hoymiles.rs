@@ -18,7 +18,7 @@ use crate::Status;
 const BASE_URL: &str = "https://global.hoymiles.com/platform/api/gateway";
 
 /// The interval between data polls (in seconds).
-const POLL_INTERVAL: u64 = 900;
+const POLL_INTERVAL: u64 = 300;
 
 /// The configuration necessary to access the Hoymiles.
 #[derive(Debug, Deserialize)]
