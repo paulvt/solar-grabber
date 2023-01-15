@@ -2,11 +2,10 @@
 
 use std::time::{Duration, SystemTime};
 
-use reqwest::StatusCode;
 use rocket::tokio::time::sleep;
 
 use crate::{
-    services::{Service, Services},
+    services::{Error, Service, Services},
     STATUS,
 };
 
@@ -38,7 +37,7 @@ pub(super) async fn update_loop(service: Services) -> color_eyre::Result<()> {
 
         let status = match service.update(timestamp).await {
             Ok(status) => status,
-            Err(e) if e.status() == Some(StatusCode::UNAUTHORIZED) => {
+            Err(Error::NotAuthorized) => {
                 println!("✨ Update unauthorized, trying to log in again...");
                 service.login().await?;
                 println!("⚡ Logged in successfully!");

@@ -13,7 +13,7 @@ use rocket::async_trait;
 use serde::{Deserialize, Deserializer, Serialize};
 use url::ParseError;
 
-use crate::Status;
+use crate::{services::Result, Status};
 
 /// The base URL of Hoymiles API gateway.
 const BASE_URL: &str = "https://global.hoymiles.com/platform/api/gateway";
@@ -36,7 +36,7 @@ pub(crate) struct Config {
 }
 
 /// Instantiates the Hoymiles service.
-pub(crate) fn service(config: Config) -> Result<Service, reqwest::Error> {
+pub(crate) fn service(config: Config) -> Result<Service> {
     let cookie_jar = Arc::new(CookieJar::default());
     let client = ClientBuilder::new()
         .cookie_provider(Arc::clone(&cookie_jar))
@@ -276,7 +276,7 @@ impl super::Service for Service {
     /// It mainly stores the acquired cookies in the client's cookie jar and adds the token cookie
     /// provided by the logins response. The login credentials come from the loaded configuration
     /// (see [`Config`]).
-    async fn login(&mut self) -> Result<(), reqwest::Error> {
+    async fn login(&mut self) -> Result<()> {
         let base_url = Url::parse(BASE_URL).expect("valid base URL");
         let login_url = login_url().expect("valid login URL");
         let login_request = ApiLoginRequest::new(&self.config.username, &self.config.password);
@@ -292,7 +292,7 @@ impl super::Service for Service {
                 eprintln!("api_response = {:#?}", &api_response);
                 api_response.data.expect("No API response data found")
             }
-            Err(err) => return Err(err),
+            Err(err) => return Err(err.into()),
         };
         // Insert the token in the reponse data as the cookie `hm_token` into the cookie jar.
         let cookie = format!("hm_token={}", login_response_data.token);
@@ -306,7 +306,7 @@ impl super::Service for Service {
     /// It needs the cookies from the login to be able to perform the action.
     /// It uses a endpoint to construct the [`Status`] struct, but it needs to summarize the today
     /// value with the total value because Hoymiles only includes it after the day has finished.
-    async fn update(&mut self, _last_updated: u64) -> Result<Status, reqwest::Error> {
+    async fn update(&mut self, _last_updated: u64) -> Result<Status> {
         let api_url = api_url().expect("valid API power URL");
         let api_data_request = ApiDataRequest::new(self.config.sid);
         let api_response = self
@@ -321,7 +321,7 @@ impl super::Service for Service {
                 eprintln!("api_response = {:#?}", &api_response);
                 api_response.data.expect("No API response data found")
             }
-            Err(err) => return Err(err),
+            Err(err) => return Err(err.into()),
         };
         let current_w = api_data.real_power;
         let mut total_kwh = (api_data.total_eq + api_data.today_eq) / 1000.0;

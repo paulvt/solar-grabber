@@ -27,6 +27,22 @@ pub(crate) fn get(config: Config) -> color_eyre::Result<Services> {
     }
 }
 
+/// The errors that can occur during service API transactions.
+#[derive(Debug, thiserror::Error)]
+pub(crate) enum Error {
+    /// The service is not or no longer authorized to perform requests.
+    ///
+    /// This usually indicates that the service needs to login again.
+    #[error("not/no longer authorized")]
+    NotAuthorized,
+    /// The services encountered some other API request error.
+    #[error("API request error")]
+    Request(#[from] reqwest::Error)
+}
+
+/// Type alias for service results.
+pub(crate) type Result<T, E = Error> = std::result::Result<T, E>;
+
 /// The supported cloud services.
 #[enum_dispatch(Service)]
 pub(crate) enum Services {
@@ -44,8 +60,8 @@ pub(crate) trait Service {
     fn poll_interval(&self) -> u64;
 
     /// Perfoms a login on the cloud service (if necessary).
-    async fn login(&mut self) -> Result<(), reqwest::Error>;
+    async fn login(&mut self) -> Result<()>;
 
     /// Retrieves a status update using the API of the cloud service.
-    async fn update(&mut self, timestamp: u64) -> Result<Status, reqwest::Error>;
+    async fn update(&mut self, timestamp: u64) -> Result<Status>;
 }

@@ -4,12 +4,15 @@
 //! to retrieve the energy data (using the session cookies).
 //! See also: <https://my.autarco.com>.
 
-use reqwest::{Client, ClientBuilder, Url};
+use reqwest::{Client, ClientBuilder, StatusCode, Url};
 use rocket::async_trait;
 use serde::Deserialize;
 use url::ParseError;
 
-use crate::Status;
+use crate::{
+    services::{Error, Result},
+    Status,
+};
 
 /// The base URL of My Autarco site.
 const BASE_URL: &str = "https://my.autarco.com";
@@ -29,7 +32,7 @@ pub(crate) struct Config {
 }
 
 /// Instantiates the My Autarco service.
-pub(crate) fn service(config: Config) -> Result<Service, reqwest::Error> {
+pub(crate) fn service(config: Config) -> Result<Service> {
     let client = ClientBuilder::new().cookie_store(true).build()?;
     let service = Service { client, config };
 
@@ -86,7 +89,7 @@ impl super::Service for Service {
     ///
     /// It mainly stores the acquired cookie in the client's cookie jar. The login credentials come
     /// from the loaded configuration (see [`Config`]).
-    async fn login(&mut self) -> Result<(), reqwest::Error> {
+    async fn login(&mut self) -> Result<()> {
         let params = [
             ("username", &self.config.username),
             ("password", &self.config.password),
@@ -101,20 +104,23 @@ impl super::Service for Service {
     ///
     /// It needs the cookie from the login to be able to perform the action. It uses both the
     /// `energy` and `power` endpoint to construct the [`Status`] struct.
-    async fn update(&mut self, last_updated: u64) -> Result<Status, reqwest::Error> {
+    async fn update(&mut self, last_updated: u64) -> Result<Status> {
         // Retrieve the data from the API endpoints.
         let api_energy_url = api_url(&self.config.site_id, "energy").expect("valid API energy URL");
         let api_response = self.client.get(api_energy_url).send().await?;
         let api_energy = match api_response.error_for_status() {
             Ok(res) => res.json::<ApiEnergy>().await?,
-            Err(err) => return Err(err),
+            Err(err) if err.status() == Some(StatusCode::UNAUTHORIZED) => {
+                return Err(Error::NotAuthorized)
+            }
+            Err(err) => return Err(err.into()),
         };
 
         let api_power_url = api_url(&self.config.site_id, "power").expect("valid API power URL");
         let api_response = self.client.get(api_power_url).send().await?;
         let api_power = match api_response.error_for_status() {
             Ok(res) => res.json::<ApiPower>().await?,
-            Err(err) => return Err(err),
+            Err(err) => return Err(err.into()),
         };
 
         Ok(Status {
