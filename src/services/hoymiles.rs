@@ -21,6 +21,11 @@ const BASE_URL: &str = "https://global.hoymiles.com/platform/api/gateway";
 /// The date/time format used by the Hoymiles API.
 const DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
 
+/// The language to switch the API to.
+///
+/// If not set, it seems it uses `zh_cn`.
+const LANGUAGE: &str = "en_us";
+
 /// The interval between data polls (in seconds).
 const POLL_INTERVAL: u64 = 300;
 
@@ -279,6 +284,11 @@ impl super::Service for Service {
     async fn login(&mut self) -> Result<()> {
         let base_url = Url::parse(BASE_URL).expect("valid base URL");
         let login_url = login_url().expect("valid login URL");
+
+        // Insert the cookie `hm_token_language` to specific the API language into the cookie jar.
+        let lang_cookie = format!("hm_token_language={}", LANGUAGE);
+        self.cookie_jar.add_cookie_str(&lang_cookie, &base_url);
+
         let login_request = ApiLoginRequest::new(&self.config.username, &self.config.password);
         let login_response = self
             .client
@@ -295,8 +305,8 @@ impl super::Service for Service {
             Err(err) => return Err(err.into()),
         };
         // Insert the token in the reponse data as the cookie `hm_token` into the cookie jar.
-        let cookie = format!("hm_token={}", login_response_data.token);
-        self.cookie_jar.add_cookie_str(&cookie, &base_url);
+        let token_cookie = format!("hm_token={}", login_response_data.token);
+        self.cookie_jar.add_cookie_str(&token_cookie, &base_url);
 
         Ok(())
     }
