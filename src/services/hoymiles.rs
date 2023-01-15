@@ -248,7 +248,8 @@ struct ApiDataResponseData {
 impl super::Service for Service {
     /// The interval between data polls (in seconds).
     ///
-    /// Hoymiles processes provides information from the invertor every 15 minutes.
+    /// Hoymiles processes information from the invertor about every 15 minutes. Since this is not
+    /// really exact, we need to poll at a higher rate to detect changes faster!
     fn poll_interval(&self) -> u64 {
         POLL_INTERVAL
     }
