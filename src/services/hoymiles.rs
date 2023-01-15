@@ -76,13 +76,13 @@ struct ApiLoginRequest {
 impl ApiLoginRequest {
     /// Creates a new API login request.
     fn new(username: &str, password: &str) -> Self {
+        let user_name = username.to_owned();
         let mut hasher = Md5::new();
         hasher.update(password.as_bytes());
         let password = format!("{:x}", hasher.finalize());
 
-        // TODO: Hash the password!
         let body = ApiLoginRequestBody {
-            user_name: username.to_owned(),
+            user_name,
             password,
         };
 
