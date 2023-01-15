@@ -113,12 +113,14 @@ where
 /// Deserialize a string ([`&str`]) into a date/time ([`DateTime<Local>`]).
 fn from_date_time_str<'de, D>(deserializer: D) -> Result<DateTime<Local>, D::Error>
 where
-D: Deserializer<'de>,
-D::Error: serde::de::Error {
+    D: Deserializer<'de>,
+    D::Error: serde::de::Error,
+{
     use serde::de::Error;
 
     let s = <&str>::deserialize(deserializer)?;
-    Local.datetime_from_str(s, DATE_TIME_FORMAT)
+    Local
+        .datetime_from_str(s, DATE_TIME_FORMAT)
         .map_err(D::Error::custom)
 }
 

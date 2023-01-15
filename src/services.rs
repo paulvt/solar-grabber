@@ -36,7 +36,7 @@ pub(crate) enum Error {
     #[error("not/no longer authorized")]
     NotAuthorized,
     /// The services encountered some other API request error.
-    #[error("API request error")]
+    #[error("API request error: {0}")]
     Request(#[from] reqwest::Error)
 }
 
