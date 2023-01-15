@@ -44,8 +44,8 @@ pub(crate) trait Service {
     fn poll_interval(&self) -> u64;
 
     /// Perfoms a login on the cloud service (if necessary).
-    async fn login(&self) -> Result<(), reqwest::Error>;
+    async fn login(&mut self) -> Result<(), reqwest::Error>;
 
     /// Retrieves a status update using the API of the cloud service.
-    async fn update(&self, timestamp: u64) -> Result<Status, reqwest::Error>;
+    async fn update(&mut self, timestamp: u64) -> Result<Status, reqwest::Error>;
 }

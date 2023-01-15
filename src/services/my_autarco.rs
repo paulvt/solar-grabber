@@ -86,7 +86,7 @@ impl super::Service for Service {
     ///
     /// It mainly stores the acquired cookie in the client's cookie jar. The login credentials come
     /// from the loaded configuration (see [`Config`]).
-    async fn login(&self) -> Result<(), reqwest::Error> {
+    async fn login(&mut self) -> Result<(), reqwest::Error> {
         let params = [
             ("username", &self.config.username),
             ("password", &self.config.password),
@@ -101,7 +101,7 @@ impl super::Service for Service {
     ///
     /// It needs the cookie from the login to be able to perform the action. It uses both the
     /// `energy` and `power` endpoint to construct the [`Status`] struct.
-    async fn update(&self, last_updated: u64) -> Result<Status, reqwest::Error> {
+    async fn update(&mut self, last_updated: u64) -> Result<Status, reqwest::Error> {
         // Retrieve the data from the API endpoints.
         let api_energy_url = api_url(&self.config.site_id, "energy").expect("valid API energy URL");
         let api_response = self.client.get(api_energy_url).send().await?;

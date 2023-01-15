@@ -15,6 +15,8 @@ use crate::{
 /// It updates the mutex-guarded current update [`Status`](crate::Status) struct which can be
 /// retrieved via Rocket.
 pub(super) async fn update_loop(service: Services) -> color_eyre::Result<()> {
+    let mut service = service;
+
     // Log in on the cloud service.
     println!("⚡ Logging in...");
     service.login().await?;

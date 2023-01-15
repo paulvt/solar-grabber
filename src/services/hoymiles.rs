@@ -37,10 +37,12 @@ pub(crate) fn service(config: Config) -> Result<Service, reqwest::Error> {
     let client = ClientBuilder::new()
         .cookie_provider(Arc::clone(&cookie_jar))
         .build()?;
+    let total_kwh = 0f32;
     let service = Service {
         client,
         config,
         cookie_jar,
+        total_kwh,
     };
 
     Ok(service)
@@ -55,6 +57,8 @@ pub(crate) struct Service {
     config: Config,
     /// The cookie jar used for API requests.
     cookie_jar: Arc<CookieJar>,
+    /// The last known total produced energy value.
+    total_kwh: f32,
 }
 
 /// Returns the login URL for the Hoymiles site.
@@ -254,7 +258,7 @@ impl super::Service for Service {
     /// It mainly stores the acquired cookies in the client's cookie jar and adds the token cookie
     /// provided by the logins response. The login credentials come from the loaded configuration
     /// (see [`Config`]).
-    async fn login(&self) -> Result<(), reqwest::Error> {
+    async fn login(&mut self) -> Result<(), reqwest::Error> {
         let base_url = Url::parse(BASE_URL).expect("valid base URL");
         let login_url = login_url().expect("valid login URL");
         let login_request = ApiLoginRequest::new(&self.config.username, &self.config.password);
@@ -284,7 +288,7 @@ impl super::Service for Service {
     /// It needs the cookies from the login to be able to perform the action.
     /// It uses a endpoint to construct the [`Status`] struct, but it needs to summarize the today
     /// value with the total value because Hoymiles only includes it after the day has finished.
-    async fn update(&self, last_updated: u64) -> Result<Status, reqwest::Error> {
+    async fn update(&mut self, last_updated: u64) -> Result<Status, reqwest::Error> {
         let api_url = api_url().expect("valid API power URL");
         let api_data_request = ApiDataRequest::new(self.config.sid);
         let api_response = self
@@ -302,7 +306,16 @@ impl super::Service for Service {
             Err(err) => return Err(err),
         };
         let current_w = api_data.real_power;
-        let total_kwh = (api_data.total_eq + api_data.today_eq) / 1000.0;
+        let mut total_kwh = (api_data.total_eq + api_data.today_eq) / 1000.0;
+
+        // Sometimes it can be that `today_eq` is reset when the day switches but it has not been
+        // added to `total_eq` yet. The `total_eq` should always be non-decreasing, so return the
+        // last known value until this is corrected (this most suredly happens during the night).
+        if total_kwh <= self.total_kwh {
+            total_kwh = self.total_kwh
+        } else {
+            self.total_kwh = total_kwh;
+        }
 
         Ok(Status {
             current_w,
