@@ -67,9 +67,68 @@ fn api_url() -> Result<Url, ParseError> {
     Url::parse(&format!("{BASE_URL}/pvm-data/data_count_station_real_data"))
 }
 
+/// Captures JSON values that can either be a string or an object.
+///
+/// This is used for the API responses where the data field is either an object or an empty string
+/// instead of `null`.
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+enum StringOrObject<'a, T> {
+    /// The value is an object (deserializable as type `T`).
+    Object(T),
+    /// The value is a string.
+    String(&'a str),
+}
+
+/// Deserialize either a string or an object as an option of type `T`.
+fn from_empty_str_or_object<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
+where
+    D: Deserializer<'de>,
+    D::Error: serde::de::Error,
+    T: Deserialize<'de>,
+{
+    use serde::de::Error;
+
+    match <StringOrObject<'_, T>>::deserialize(deserializer) {
+        Ok(StringOrObject::String(s)) if s.is_empty() => Ok(None),
+        Ok(StringOrObject::String(_)) => Err(Error::custom("Non-empty string not allowed here")),
+        Ok(StringOrObject::Object(t)) => Ok(Some(t)),
+        Err(err) => Err(err),
+    }
+}
+
+/// Deserializes a string ([`&str`]) into a float ([`f32`]).
+///
+/// This is used for the API responses where the value is a float put into a string.
+fn from_float_str<'de, D>(deserializer: D) -> Result<f32, D::Error>
+where
+    D: Deserializer<'de>,
+    D::Error: serde::de::Error,
+{
+    use serde::de::Error;
+
+    let s = <&str>::deserialize(deserializer)?;
+    s.parse::<f32>().map_err(D::Error::custom)
+}
+
+/// Deserializes a string ([`&str`]) into an integer ([`u16`]).
+///
+/// This is used for the API responses where the value is an integer put into a string.
+fn from_integer_str<'de, D>(deserializer: D) -> Result<u16, D::Error>
+where
+    D: Deserializer<'de>,
+    D::Error: serde::de::Error,
+{
+    use serde::de::Error;
+
+    let s = <&str>::deserialize(deserializer)?;
+    s.parse::<u16>().map_err(D::Error::custom)
+}
+
 /// The request passed to the API login endpoint.
 #[derive(Debug, Serialize)]
 struct ApiLoginRequest {
+    /// The body of the API login request.
     body: ApiLoginRequestBody,
 }
 
@@ -93,17 +152,23 @@ impl ApiLoginRequest {
 /// The request body passed to the API login endpoint.
 #[derive(Debug, Serialize)]
 struct ApiLoginRequestBody {
+    /// The username to login with.
     password: String,
+    /// The password to login with.
     user_name: String,
 }
 
 /// The response returned by the API login endpoint.
 #[derive(Debug, Deserialize)]
 struct ApiLoginResponse {
-    // status: String,
-    // message: String,
-    /// The embedded response data
-    data: ApiLoginResponseData,
+    /// The status (error) code as a string: 0 for OK, another number for error.
+    #[serde(deserialize_with = "from_integer_str")]
+    status: u16,
+    /// The status message.
+    message: String,
+    /// The embedded response data.
+    #[serde(deserialize_with = "from_empty_str_or_object")]
+    data: Option<ApiLoginResponseData>,
     // systemNotice: Option<String>,
 }
 
@@ -117,6 +182,7 @@ struct ApiLoginResponseData {
 /// The request passed to the API data endpoint.
 #[derive(Debug, Serialize)]
 struct ApiDataRequest {
+    /// The body of the API data request.
     body: ApiDataRequestBody,
 }
 
@@ -132,29 +198,22 @@ impl ApiDataRequest {
 /// The request body passed to the API data endpoint.
 #[derive(Debug, Serialize)]
 struct ApiDataRequestBody {
+    /// The ID of the Hoymiles station.
     sid: u32,
 }
 
 /// The response returned by the API data endpoint.
 #[derive(Debug, Deserialize)]
 struct ApiDataResponse {
-    // status: String,
-    // message: String,
-    // /// The embedded response data
-    data: ApiDataResponseData,
+    /// The status (error) code as a string: 0 for OK, another number for error.
+    #[serde(deserialize_with = "from_integer_str")]
+    status: u16,
+    /// The status message.
+    message: String,
+    /// The embedded response data.
+    #[serde(deserialize_with = "from_empty_str_or_object")]
+    data: Option<ApiDataResponseData>,
     // systemNotice: Option<String>,
-}
-
-/// Deserializes a string ([`&str`]) into a float ([`f32`]).
-fn from_float_str<'de, D>(deserializer: D) -> Result<f32, D::Error>
-where
-    D: Deserializer<'de>,
-    D::Error: serde::de::Error,
-{
-    use serde::de::Error;
-
-    let s = <&str>::deserialize(deserializer)?;
-    s.parse::<f32>().map_err(D::Error::custom)
 }
 
 /// The response data returned by the API data endpoint.
@@ -206,7 +265,11 @@ impl super::Service for Service {
             .send()
             .await?;
         let login_response_data = match login_response.error_for_status() {
-            Ok(res) => res.json::<ApiLoginResponse>().await?.data,
+            Ok(res) => {
+                let api_response = res.json::<ApiLoginResponse>().await?;
+                eprintln!("api_response = {:#?}", &api_response);
+                api_response.data.expect("No API response data found")
+            }
             Err(err) => return Err(err),
         };
         // Insert the token in the reponse data as the cookie `hm_token` into the cookie jar.
@@ -231,7 +294,11 @@ impl super::Service for Service {
             .send()
             .await?;
         let api_data = match api_response.error_for_status() {
-            Ok(res) => res.json::<ApiDataResponse>().await?.data,
+            Ok(res) => {
+                let api_response = res.json::<ApiDataResponse>().await?;
+                eprintln!("api_response = {:#?}", &api_response);
+                api_response.data.expect("No API response data found")
+            }
             Err(err) => return Err(err),
         };
         let current_w = api_data.real_power;
