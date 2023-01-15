@@ -6,6 +6,7 @@
 
 use std::sync::Arc;
 
+use chrono::{DateTime, Local, TimeZone};
 use md5::{Digest, Md5};
 use reqwest::{cookie::Jar as CookieJar, Client, ClientBuilder, Url};
 use rocket::async_trait;
@@ -16,6 +17,9 @@ use crate::Status;
 
 /// The base URL of Hoymiles API gateway.
 const BASE_URL: &str = "https://global.hoymiles.com/platform/api/gateway";
+
+/// The date/time format used by the Hoymiles API.
+const DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
 
 /// The interval between data polls (in seconds).
 const POLL_INTERVAL: u64 = 300;
@@ -99,6 +103,18 @@ where
         Ok(StringOrObject::Object(t)) => Ok(Some(t)),
         Err(err) => Err(err),
     }
+}
+
+/// Deserialize a string ([`&str`]) into a date/time ([`DateTime<Local>`]).
+fn from_date_time_str<'de, D>(deserializer: D) -> Result<DateTime<Local>, D::Error>
+where
+D: Deserializer<'de>,
+D::Error: serde::de::Error {
+    use serde::de::Error;
+
+    let s = <&str>::deserialize(deserializer)?;
+    Local.datetime_from_str(s, DATE_TIME_FORMAT)
+        .map_err(D::Error::custom)
 }
 
 /// Deserializes a string ([`&str`]) into a float ([`f32`]).
@@ -237,7 +253,8 @@ struct ApiDataResponseData {
     // co2_emission_reducation: f32,
     // plant_tree: u32,
     // data_time: String,
-    // last_data_time: String,
+    #[serde(deserialize_with = "from_date_time_str")]
+    last_data_time: DateTime<Local>,
     // capacitor: f32,
     // is_balance: bool,
     // is_reflux: bool,
@@ -289,7 +306,7 @@ impl super::Service for Service {
     /// It needs the cookies from the login to be able to perform the action.
     /// It uses a endpoint to construct the [`Status`] struct, but it needs to summarize the today
     /// value with the total value because Hoymiles only includes it after the day has finished.
-    async fn update(&mut self, last_updated: u64) -> Result<Status, reqwest::Error> {
+    async fn update(&mut self, _last_updated: u64) -> Result<Status, reqwest::Error> {
         let api_url = api_url().expect("valid API power URL");
         let api_data_request = ApiDataRequest::new(self.config.sid);
         let api_response = self
@@ -308,6 +325,7 @@ impl super::Service for Service {
         };
         let current_w = api_data.real_power;
         let mut total_kwh = (api_data.total_eq + api_data.today_eq) / 1000.0;
+        let last_updated = api_data.last_data_time.timestamp() as u64;
 
         // Sometimes it can be that `today_eq` is reset when the day switches but it has not been
         // added to `total_eq` yet. The `total_eq` should always be non-decreasing, so return the

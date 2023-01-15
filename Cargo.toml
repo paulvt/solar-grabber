@@ -12,6 +12,7 @@ repository = "https://git.luon.net/paul/solar-grabber"
 license = "MIT"
 
 [dependencies]
+chrono = { version = "0.4.23", features = ["serde"] }
 color-eyre = "0.6.2"
 enum_dispatch = "0.3.9"
 md-5 = "0.10.5"
