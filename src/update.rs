@@ -38,13 +38,13 @@ pub(super) async fn update_loop(service: Services) -> color_eyre::Result<()> {
         let status = match service.update(timestamp).await {
             Ok(status) => status,
             Err(Error::NotAuthorized) => {
-                println!("✨ Update unauthorized, trying to log in again...");
+                eprintln!("💥 Update unauthorized, trying to log in again...");
                 service.login().await?;
                 println!("⚡ Logged in successfully!");
                 continue;
             }
             Err(e) => {
-                println!("✨ Failed to update status: {}", e);
+                eprintln!("💥 Failed to update status: {}", e);
                 continue;
             }
         };
