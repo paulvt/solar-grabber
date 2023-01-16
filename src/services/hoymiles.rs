@@ -9,7 +9,7 @@ use std::sync::Arc;
 use chrono::{DateTime, Local, TimeZone};
 use md5::{Digest, Md5};
 use reqwest::{cookie::Jar as CookieJar, Client, ClientBuilder, Url};
-use rocket::async_trait;
+use rocket::{async_trait, serde::json::Value as JsonValue};
 use serde::{Deserialize, Deserializer, Serialize};
 use url::ParseError;
 
@@ -86,7 +86,8 @@ fn api_url() -> Result<Url, ParseError> {
 /// Captures JSON values that can either be a string or an object.
 ///
 /// This is used for the API responses where the data field is either an object or an empty string
-/// instead of `null`.
+/// instead of `null`. If the response is not deserializable object, the JSON value is preserved
+/// for debugging purposes.
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
 enum StringOrObject<'a, T> {
@@ -94,6 +95,8 @@ enum StringOrObject<'a, T> {
     Object(T),
     /// The value is a string.
     String(&'a str),
+    /// The value is not some JSON value not deserializable as type `T`.
+    Value(JsonValue),
 }
 
 /// Deserialize either a string or an object as an option of type `T`.
@@ -109,6 +112,11 @@ where
         Ok(StringOrObject::String(s)) if s.is_empty() => Ok(None),
         Ok(StringOrObject::String(_)) => Err(Error::custom("Non-empty string not allowed here")),
         Ok(StringOrObject::Object(t)) => Ok(Some(t)),
+        Ok(StringOrObject::Value(j)) => Err(Error::custom(&format!(
+            "Undeserializable JSON object: {}",
+            j
+        ))),
+
         Err(err) => Err(err),
     }
 }
