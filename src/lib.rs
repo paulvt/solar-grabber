@@ -20,12 +20,12 @@ mod update;
 use std::sync::Mutex;
 
 use once_cell::sync::Lazy;
-use rocket::fairing::AdHoc;
-use rocket::serde::json::Json;
 use rocket::{
+    catch, catchers,
+    fairing::AdHoc,
     get, routes,
-    serde::{Deserialize, Serialize},
-    Build, Rocket,
+    serde::{json::Json, Deserialize, Serialize},
+    Build, Request, Rocket,
 };
 
 use self::update::update_loop;
@@ -53,17 +53,47 @@ struct Status {
     last_updated: u64,
 }
 
+/// An error used as JSON response.
+#[derive(Debug, Serialize)]
+#[serde(crate = "rocket::serde")]
+struct Error {
+    /// The error message.
+    error: String,
+}
+
+impl Error {
+    /// Creates a new error result from a message.
+    fn from(message: impl AsRef<str>) -> Self {
+        let error = String::from(message.as_ref());
+
+        Self { error }
+    }
+}
+
 /// Returns the current (last known) status.
 #[get("/", format = "application/json")]
-async fn status() -> Option<Json<Status>> {
+async fn status() -> Result<Json<Status>, Json<Error>> {
     let status_guard = STATUS.lock().expect("Status mutex was poisoined");
-    status_guard.map(Json)
+    status_guard
+        .map(Json)
+        .ok_or_else(|| Json(Error::from("No status found (yet)")))
+}
+
+/// Default catcher for any unsuppored request
+#[catch(default)]
+fn unsupported(status: rocket::http::Status, _request: &Request<'_>) -> Json<Error> {
+    let code = status.code;
+
+    Json(Error::from(format!(
+        "Unhandled/unsupported API call or path (HTTP {code})"
+    )))
 }
 
 /// Creates a Rocket and attaches the config parsing and update loop as fairings.
 pub fn setup() -> Rocket<Build> {
     rocket::build()
         .mount("/", routes![status])
+        .register("/", catchers![unsupported])
         .attach(AdHoc::config::<Config>())
         .attach(AdHoc::on_liftoff("Updater", |rocket| {
             Box::pin(async move {

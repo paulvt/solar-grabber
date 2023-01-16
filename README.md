@@ -104,6 +104,16 @@ This contains the current production power (`current_w`) in Watt,
 the total of produced energy since installation (`total_kwh`) in kilowatt-hour
 and the (UNIX) timestamp that indicates when the information was last updated.
 
+### Error response
+
+If the API endpoint is accessed before any statistical data has been retrieved,
+or if any other request than `GET /` is made, an error response is returned
+that looks like this:
+
+```json
+{"error":"No status found (yet)"}
+```
+
 ## Integration in Home Assistant
 
 To integrate the Solar Grabber service in your [Home Assistant](https://www.home-assistant.io/)
