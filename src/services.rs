@@ -35,9 +35,12 @@ pub(crate) enum Error {
     /// This usually indicates that the service needs to login again.
     #[error("not/no longer authorized")]
     NotAuthorized,
-    /// The services encountered some other API request error.
+    /// The service encountered some other API request error.
     #[error("API request error: {0}")]
-    Request(#[from] reqwest::Error)
+    Request(#[from] reqwest::Error),
+    /// The service encountered an unsupported API response.
+    #[error("API service error: {0}")]
+    Response(String),
 }
 
 /// Type alias for service results.

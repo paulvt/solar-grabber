@@ -13,7 +13,10 @@ use rocket::async_trait;
 use serde::{Deserialize, Deserializer, Serialize};
 use url::ParseError;
 
-use crate::{services::Result, Status};
+use crate::{
+    services::{Error, Result},
+    Status,
+};
 
 /// The base URL of Hoymiles API gateway.
 const BASE_URL: &str = "https://global.hoymiles.com/platform/api/gateway";
@@ -300,9 +303,17 @@ impl super::Service for Service {
             .await?;
         let login_response_data = match login_response.error_for_status() {
             Ok(res) => {
-                let api_response = res.json::<ApiLoginResponse>().await?;
-                eprintln!("api_response = {:#?}", &api_response);
-                api_response.data.expect("No API response data found")
+                let login_response = res.json::<ApiLoginResponse>().await?;
+                match login_response.status {
+                    0 => login_response.data.expect("No API response data found"),
+                    1 => return Err(Error::NotAuthorized),
+                    _ => {
+                        return Err(Error::Response(format!(
+                            "{} ({})",
+                            login_response.message, login_response.status
+                        )))
+                    }
+                }
             }
             Err(err) => return Err(err.into()),
         };
@@ -330,8 +341,16 @@ impl super::Service for Service {
         let api_data = match api_response.error_for_status() {
             Ok(res) => {
                 let api_response = res.json::<ApiDataResponse>().await?;
-                eprintln!("api_response = {:#?}", &api_response);
-                api_response.data.expect("No API response data found")
+                match api_response.status {
+                    0 => api_response.data.expect("No API response data found"),
+                    1 | 100 => return Err(Error::NotAuthorized),
+                    _ => {
+                        return Err(Error::Response(format!(
+                            "{} ({})",
+                            api_response.message, api_response.status
+                        )))
+                    }
+                }
             }
             Err(err) => return Err(err.into()),
         };
