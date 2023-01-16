@@ -5,8 +5,7 @@
 //! See also: <https://my.autarco.com>.
 
 use reqwest::{Client, ClientBuilder, StatusCode, Url};
-use rocket::async_trait;
-use serde::Deserialize;
+use rocket::{async_trait, serde::Deserialize};
 use url::ParseError;
 
 use crate::{
@@ -22,6 +21,7 @@ const POLL_INTERVAL: u64 = 300;
 
 /// The configuration necessary to access the My Autarco API.
 #[derive(Debug, Deserialize)]
+#[serde(crate = "rocket::serde")]
 pub(crate) struct Config {
     /// The username of the account to login with
     username: String,
@@ -60,6 +60,7 @@ fn api_url(site_id: &str, endpoint: &str) -> Result<Url, ParseError> {
 
 /// The energy data returned by the energy API endpoint.
 #[derive(Debug, Deserialize)]
+#[serde(crate = "rocket::serde")]
 struct ApiEnergy {
     /// Total energy produced today (kWh)
     // pv_today: u32,
@@ -71,6 +72,7 @@ struct ApiEnergy {
 
 ///  The power data returned by the power API endpoint.
 #[derive(Debug, Deserialize)]
+#[serde(crate = "rocket::serde")]
 struct ApiPower {
     /// Current power production (W)
     pv_now: u32,

@@ -9,8 +9,10 @@ use std::sync::Arc;
 use chrono::{DateTime, Local, TimeZone};
 use md5::{Digest, Md5};
 use reqwest::{cookie::Jar as CookieJar, Client, ClientBuilder, Url};
-use rocket::{async_trait, serde::json::Value as JsonValue};
-use serde::{Deserialize, Deserializer, Serialize};
+use rocket::{
+    async_trait,
+    serde::{json::Value as JsonValue, Deserialize, Deserializer, Serialize},
+};
 use url::ParseError;
 
 use crate::{
@@ -34,6 +36,7 @@ const POLL_INTERVAL: u64 = 300;
 
 /// The configuration necessary to access the Hoymiles.
 #[derive(Debug, Deserialize)]
+#[serde(crate = "rocket::serde")]
 pub(crate) struct Config {
     /// The username of the account to login with
     username: String,
@@ -89,7 +92,7 @@ fn api_url() -> Result<Url, ParseError> {
 /// instead of `null`. If the response is not deserializable object, the JSON value is preserved
 /// for debugging purposes.
 #[derive(Debug, Deserialize)]
-#[serde(untagged)]
+#[serde(crate = "rocket::serde", untagged)]
 enum StringOrObject<'a, T> {
     /// The value is an object (deserializable as type `T`).
     Object(T),
@@ -103,10 +106,10 @@ enum StringOrObject<'a, T> {
 fn from_empty_str_or_object<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
 where
     D: Deserializer<'de>,
-    D::Error: serde::de::Error,
+    D::Error: rocket::serde::de::Error,
     T: Deserialize<'de>,
 {
-    use serde::de::Error;
+    use rocket::serde::de::Error;
 
     match <StringOrObject<'_, T>>::deserialize(deserializer) {
         Ok(StringOrObject::String(s)) if s.is_empty() => Ok(None),
@@ -125,9 +128,9 @@ where
 fn from_date_time_str<'de, D>(deserializer: D) -> Result<DateTime<Local>, D::Error>
 where
     D: Deserializer<'de>,
-    D::Error: serde::de::Error,
+    D::Error: rocket::serde::de::Error,
 {
-    use serde::de::Error;
+    use rocket::serde::de::Error;
 
     let s = <&str>::deserialize(deserializer)?;
     Local
@@ -141,9 +144,9 @@ where
 fn from_float_str<'de, D>(deserializer: D) -> Result<f32, D::Error>
 where
     D: Deserializer<'de>,
-    D::Error: serde::de::Error,
+    D::Error: rocket::serde::de::Error,
 {
-    use serde::de::Error;
+    use rocket::serde::de::Error;
 
     let s = <&str>::deserialize(deserializer)?;
     s.parse::<f32>().map_err(D::Error::custom)
@@ -155,9 +158,9 @@ where
 fn from_integer_str<'de, D>(deserializer: D) -> Result<u16, D::Error>
 where
     D: Deserializer<'de>,
-    D::Error: serde::de::Error,
+    D::Error: rocket::serde::de::Error,
 {
-    use serde::de::Error;
+    use rocket::serde::de::Error;
 
     let s = <&str>::deserialize(deserializer)?;
     s.parse::<u16>().map_err(D::Error::custom)
@@ -165,6 +168,7 @@ where
 
 /// The request passed to the API login endpoint.
 #[derive(Debug, Serialize)]
+#[serde(crate = "rocket::serde")]
 struct ApiLoginRequest {
     /// The body of the API login request.
     body: ApiLoginRequestBody,
@@ -189,6 +193,7 @@ impl ApiLoginRequest {
 
 /// The request body passed to the API login endpoint.
 #[derive(Debug, Serialize)]
+#[serde(crate = "rocket::serde")]
 struct ApiLoginRequestBody {
     /// The username to login with.
     password: String,
@@ -198,6 +203,7 @@ struct ApiLoginRequestBody {
 
 /// The response returned by the API login endpoint.
 #[derive(Debug, Deserialize)]
+#[serde(crate = "rocket::serde")]
 struct ApiLoginResponse {
     /// The status (error) code as a string: 0 for OK, another number for error.
     #[serde(deserialize_with = "from_integer_str")]
@@ -212,6 +218,7 @@ struct ApiLoginResponse {
 
 /// The response data returned by the API login endpoint.
 #[derive(Debug, Deserialize)]
+#[serde(crate = "rocket::serde")]
 struct ApiLoginResponseData {
     /// The token to be used as cookie for API data requests.
     token: String,
@@ -219,6 +226,7 @@ struct ApiLoginResponseData {
 
 /// The request passed to the API data endpoint.
 #[derive(Debug, Serialize)]
+#[serde(crate = "rocket::serde")]
 struct ApiDataRequest {
     /// The body of the API data request.
     body: ApiDataRequestBody,
@@ -235,6 +243,7 @@ impl ApiDataRequest {
 
 /// The request body passed to the API data endpoint.
 #[derive(Debug, Serialize)]
+#[serde(crate = "rocket::serde")]
 struct ApiDataRequestBody {
     /// The ID of the Hoymiles station.
     sid: u32,
@@ -242,6 +251,7 @@ struct ApiDataRequestBody {
 
 /// The response returned by the API data endpoint.
 #[derive(Debug, Deserialize)]
+#[serde(crate = "rocket::serde")]
 struct ApiDataResponse {
     /// The status (error) code as a string: 0 for OK, another number for error.
     #[serde(deserialize_with = "from_integer_str")]
@@ -256,6 +266,7 @@ struct ApiDataResponse {
 
 /// The response data returned by the API data endpoint.
 #[derive(Debug, Deserialize)]
+#[serde(crate = "rocket::serde")]
 struct ApiDataResponseData {
     /// Energy produced today (Wh)
     #[serde(deserialize_with = "from_float_str")]

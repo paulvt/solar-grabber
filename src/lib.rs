@@ -22,8 +22,11 @@ use std::sync::Mutex;
 use once_cell::sync::Lazy;
 use rocket::fairing::AdHoc;
 use rocket::serde::json::Json;
-use rocket::{get, routes, Build, Rocket};
-use serde::{Deserialize, Serialize};
+use rocket::{
+    get, routes,
+    serde::{Deserialize, Serialize},
+    Build, Rocket,
+};
 
 use self::update::update_loop;
 
@@ -32,6 +35,7 @@ static STATUS: Lazy<Mutex<Option<Status>>> = Lazy::new(|| Mutex::new(None));
 
 /// The configuration loaded additionally by Rocket.
 #[derive(Debug, Deserialize)]
+#[serde(crate = "rocket::serde")]
 struct Config {
     /// The service-specific configuration
     service: services::Config,
@@ -39,6 +43,7 @@ struct Config {
 
 /// The current photovoltaic invertor status.
 #[derive(Clone, Copy, Debug, Serialize)]
+#[serde(crate = "rocket::serde")]
 struct Status {
     /// Current power production (W)
     current_w: f32,

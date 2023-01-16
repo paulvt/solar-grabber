@@ -4,8 +4,7 @@ pub(crate) mod hoymiles;
 pub(crate) mod my_autarco;
 
 use enum_dispatch::enum_dispatch;
-use rocket::async_trait;
-use serde::Deserialize;
+use rocket::{async_trait, serde::Deserialize};
 
 use crate::Status;
 
