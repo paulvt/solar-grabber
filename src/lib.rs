@@ -45,11 +45,11 @@ struct Config {
 #[derive(Clone, Copy, Debug, Serialize)]
 #[serde(crate = "rocket::serde")]
 struct Status {
-    /// Current power production (W)
+    /// The current power production (W).
     current_w: f32,
-    /// Total energy produced since installation (kWh)
+    /// The total energy produced since installation (kWh).
     total_kwh: f32,
-    /// Timestamp of last update
+    /// The (UNIX) timestamp of when the status was last updated.
     last_updated: u64,
 }
 
