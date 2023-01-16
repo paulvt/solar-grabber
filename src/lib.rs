@@ -107,4 +107,12 @@ pub fn setup() -> Rocket<Build> {
                 let _ = rocket::tokio::spawn(update_loop(service));
             })
         }))
+        .attach(AdHoc::on_liftoff("Version", |_| {
+            Box::pin(async move {
+                let name = env!("CARGO_PKG_NAME");
+                let version = env!("CARGO_PKG_VERSION");
+
+                println!("☀️ Started {name} v{version}");
+            })
+        }))
 }
