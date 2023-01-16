@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2023-01-16
+
+### Changed
+
+* Change poll interval for Hoymiles to 5 minutes
+* Catch and raise error when Hoymiles API data responses cannot be deserialized
+* Use stderr for error messages (and change prefix emoji)
+* Use the `serde` crate via Rocket,; drop depend on the `serde` crate itself
+
+### Fixed
+
+* Also set the state class in HA sensors example
+* Improve deserialization of Hoymiles API responses (#7)
+* Prevent total energy reported decreasing for Hoymiles (#7)
+* Set correct `last_updated` field in status report for Hoymiles (#7)
+* Set cookie to configure Hoymiles API language to English (#7)
+* Detect when Hoymiles (login/data) API response are not correct (#7)
+* Small formatting, error message and documentation fixes
+
 ## [0.2.0] - 2023-01-13
 
 ### Added
@@ -29,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Rename Autarco Scraper project to Solar Grabber.
 
-[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.2.0...HEAD
+[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.2.1...HEAD
+[0.2.1]: https://git.luon.net/paul/solar-grabber/compare/v0.2.0...v0.2.1
 [0.2.0]: https://git.luon.net/paul/solar-grabber/compare/v0.1.1...v0.2.0
 [0.1.1]: https://git.luon.net/paul/solar-grabber/src/tag/v0.1.1
