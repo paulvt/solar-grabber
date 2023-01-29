@@ -99,7 +99,7 @@ impl VersionInfo {
         Self {
             version: String::from(env!("VERGEN_BUILD_SEMVER")),
             timestamp: String::from(env!("VERGEN_BUILD_TIMESTAMP")),
-            git_sha: String::from(&env!("VERGEN_GIT_SHA")[0..8]),
+            git_sha: String::from(&env!("VERGEN_GIT_SHA")[0..7]),
             git_timestamp: String::from(env!("VERGEN_GIT_COMMIT_TIMESTAMP")),
         }
     }
@@ -143,7 +143,7 @@ pub fn setup() -> Rocket<Build> {
             Box::pin(async move {
                 let name = env!("CARGO_PKG_NAME");
                 let version = env!("VERGEN_BUILD_SEMVER");
-                let git_sha = &env!("VERGEN_GIT_SHA")[0..8];
+                let git_sha = &env!("VERGEN_GIT_SHA")[0..7];
 
                 println!("☀️ Started {name} v{version} (git @{git_sha})");
             })
