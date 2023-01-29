@@ -110,9 +110,10 @@ pub fn setup() -> Rocket<Build> {
         .attach(AdHoc::on_liftoff("Version", |_| {
             Box::pin(async move {
                 let name = env!("CARGO_PKG_NAME");
-                let version = env!("CARGO_PKG_VERSION");
+                let version = env!("VERGEN_BUILD_SEMVER");
+                let git_sha = &env!("VERGEN_GIT_SHA")[0..8];
 
-                println!("☀️ Started {name} v{version}");
+                println!("☀️ Started {name} v{version} (git @{git_sha})");
             })
         }))
 }

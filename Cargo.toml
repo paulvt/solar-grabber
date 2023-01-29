@@ -10,6 +10,7 @@ get statistical data of your solar panels.
 readme = "README.md"
 repository = "https://git.luon.net/paul/solar-grabber"
 license = "MIT"
+build = "build.rs"
 
 [dependencies]
 chrono = { version = "0.4.23", features = ["serde"] }
@@ -22,6 +23,10 @@ rocket = { version = "0.5.0-rc.2", features = ["json"] }
 thiserror = "1.0.38"
 toml = "0.5.6"
 url = "2.2.2"
+
+[build-dependencies]
+anyhow = "1.0.68"
+vergen = { version = "7.5.0", default_features = false, features = ["build", "git"] }
 
 [package.metadata.deb]
 maintainer = "Paul van Tilburg <paul@luon.net>"
