@@ -82,7 +82,7 @@ This also uses `Rocket.toml` from the current working directory as configuration
 You can alternatively pass a set of environment variables instead. See
 `docker-compose.yml` for a list.
 
-## API endpoint
+## Status API Endpoint
 
 The `/` API endpoint provides the current statistical data of your solar panels
 once it has successfully logged into the cloud service using your credentials.
@@ -92,9 +92,9 @@ There is no path and no query parameters, just:
 GET /
 ```
 
-### Response
+### Status API Response
 
-A response uses the JSON format and typically looks like this:
+The response uses the JSON format and typically looks like this:
 
 ```json
 {"current_w":23.0,"total_kwh":6159.0,"last_updated":1661194620}
@@ -104,7 +104,7 @@ This contains the current production power (`current_w`) in Watt,
 the total of produced energy since installation (`total_kwh`) in kilowatt-hour
 and the (UNIX) timestamp that indicates when the information was last updated.
 
-### Error response
+### (Status) API Error Response
 
 If the API endpoint is accessed before any statistical data has been retrieved,
 or if any other request than `GET /` is made, an error response is returned
@@ -113,6 +113,26 @@ that looks like this:
 ```json
 {"error":"No status found (yet)"}
 ```
+
+## Version API Endpoint
+
+The `/version` endpoint provides information of the current version and build
+of the service.  This can be used to check if it needs to be updated.
+Again, there is no path and no query parameters, just:
+
+```http
+GET /version
+```
+
+### Version API Response
+
+The response uses the JSON format and typically looks like this:
+
+```json
+{"version":"0.2.1","timestamp":"2023-01-29T14:10:24.971748027Z","git_sha":"5cbc3a04","git_timestamp":"2023-01-16T20:18:20Z"}
+```
+
+(Build and git information may be out of date.)
 
 ## Integration in Home Assistant
 

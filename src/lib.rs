@@ -79,6 +79,38 @@ async fn status() -> Result<Json<Status>, Json<Error>> {
         .ok_or_else(|| Json(Error::from("No status found (yet)")))
 }
 
+/// The version information as JSON response.
+#[derive(Debug, Serialize)]
+#[serde(crate = "rocket::serde")]
+struct VersionInfo {
+    /// The version of the build.
+    version: String,
+    /// The timestamp of the build.
+    timestamp: String,
+    /// The (most recent) git SHA used for the build.
+    git_sha: String,
+    /// The timestamp of the last git commit used for the build.
+    git_timestamp: String,
+}
+
+impl VersionInfo {
+    /// Retrieves the version information from the environment variables.
+    fn new() -> Self {
+        Self {
+            version: String::from(env!("VERGEN_BUILD_SEMVER")),
+            timestamp: String::from(env!("VERGEN_BUILD_TIMESTAMP")),
+            git_sha: String::from(&env!("VERGEN_GIT_SHA")[0..8]),
+            git_timestamp: String::from(env!("VERGEN_GIT_COMMIT_TIMESTAMP")),
+        }
+    }
+}
+
+/// Returns the version information.
+#[get("/version", format = "application/json")]
+async fn version() -> Result<Json<VersionInfo>, Json<Error>> {
+    Ok(Json(VersionInfo::new()))
+}
+
 /// Default catcher for any unsuppored request
 #[catch(default)]
 fn unsupported(status: rocket::http::Status, _request: &Request<'_>) -> Json<Error> {
@@ -92,7 +124,7 @@ fn unsupported(status: rocket::http::Status, _request: &Request<'_>) -> Json<Err
 /// Creates a Rocket and attaches the config parsing and update loop as fairings.
 pub fn setup() -> Rocket<Build> {
     rocket::build()
-        .mount("/", routes![status])
+        .mount("/", routes![status, version])
         .register("/", catchers![unsupported])
         .attach(AdHoc::config::<Config>())
         .attach(AdHoc::on_liftoff("Updater", |rocket| {
