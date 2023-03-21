@@ -136,7 +136,7 @@ pub fn setup() -> Rocket<Build> {
                 let service = services::get(config.service).expect("Invalid service");
 
                 // We don't care about the join handle nor error results?t
-                let _ = rocket::tokio::spawn(update_loop(service));
+                let _service = rocket::tokio::spawn(update_loop(service));
             })
         }))
         .attach(AdHoc::on_liftoff("Version", |_| {
