@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2023-03-22
+
+### Added
+
+* Implement error catchers for all endpoints (#5)
+* Print the version on lift off (#6)
+* Add `/version` endpoint to the API (#6)
+* Add Gitea Actions workflow for cargo
+
+### Fixed
+
+* Fixed/tweaked documentation
+
+### Security
+
+* Update dependencies ([RUSTSEC-2023-0018](https://rustsec.org/advisories/RUSTSEC-2023-0018.html))
+
 ## [0.2.1] - 2023-01-16
 
 ### Changed
@@ -48,7 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Rename Autarco Scraper project to Solar Grabber.
 
-[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.2.1...HEAD
+[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.2.2...HEAD
+[0.2.2]: https://git.luon.net/paul/solar-grabber/compare/v0.2.1...v0.2.2
 [0.2.1]: https://git.luon.net/paul/solar-grabber/compare/v0.2.0...v0.2.1
 [0.2.0]: https://git.luon.net/paul/solar-grabber/compare/v0.1.1...v0.2.0
 [0.1.1]: https://git.luon.net/paul/solar-grabber/src/tag/v0.1.1
