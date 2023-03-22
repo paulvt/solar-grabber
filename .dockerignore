@@ -5,9 +5,6 @@ target
 Dockerfile*
 docker-compose*
 
-# Git folder
-.git
-
 # Dot files
 .gitignore
 

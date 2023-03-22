@@ -11,10 +11,12 @@ ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 RUN USER=root cargo new --bin /usr/src/solar-grabber
 WORKDIR /usr/src/solar-grabber
 COPY ./Cargo.* ./
+RUN sed -i -e 's/^build =/#build =/' Cargo.toml
 RUN cargo build --release
 RUN rm src/*.rs
 
 # Add the real project files from current folder
+COPY ./Cargo.toml ./
 ADD . ./
 
 # Build the actual binary from the copied local files
