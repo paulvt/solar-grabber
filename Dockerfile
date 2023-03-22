@@ -7,6 +7,7 @@
 FROM docker.io/rust:1 as builder
 
 # Build the dependencies first
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 RUN USER=root cargo new --bin /usr/src/solar-grabber
 WORKDIR /usr/src/solar-grabber
 COPY ./Cargo.* ./
