@@ -1,7 +1,9 @@
-use anyhow::Result;
-use vergen::{vergen, Config};
+use std::error::Error;
+use vergen::EmitBuilder;
 
-fn main() -> Result<()> {
+fn main() -> Result<(), Box<dyn Error>> {
     // Generate the `cargo:` instructions to fill the appropriate environment variables.
-    vergen(Config::default())
+    EmitBuilder::builder().all_build().all_git().emit()?;
+
+    Ok(())
 }

@@ -24,8 +24,7 @@ thiserror = "1.0.38"
 url = "2.2.2"
 
 [build-dependencies]
-anyhow = "1.0.68"
-vergen = { version = "7.5.0", default_features = false, features = ["build", "git"] }
+vergen = { version = "8.1.1", features = ["build", "git", "gitcl"] }
 
 [package.metadata.deb]
 maintainer = "Paul van Tilburg <paul@luon.net>"
