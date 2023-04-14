@@ -92,14 +92,17 @@ impl super::Service for Service {
     /// It mainly stores the acquired cookie in the client's cookie jar. The login credentials come
     /// from the loaded configuration (see [`Config`]).
     async fn login(&mut self) -> Result<()> {
+        let login_url = login_url().expect("valid login URL");
         let params = [
             ("username", &self.config.username),
             ("password", &self.config.password),
         ];
-        let login_url = login_url().expect("valid login URL");
-        self.client.post(login_url).form(&params).send().await?;
-
-        Ok(())
+        let response = self.client.post(login_url).form(&params).send().await?;
+        match response.error_for_status() {
+            Ok(_) => Ok(()),
+            Err(e) if e.status() == Some(StatusCode::UNAUTHORIZED) => Err(Error::NotAuthorized),
+            Err(e) => Err(e.into()),
+        }
     }
 
     /// Retrieves a status update from the API of the My Autarco site.
