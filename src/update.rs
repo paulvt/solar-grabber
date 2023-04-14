@@ -9,6 +9,22 @@ use crate::{
     STATUS,
 };
 
+/// The default sleep interval to use between checks.
+const DEFAULT_SLEEP_INTERVAL: u64 = 10;
+
+/// The sleep interval upper limit when applying exponential backoff.
+const MAX_SLEEP_INTERVAL: u64 = 320;
+
+/// The backoff factor.
+const BACKOFF_FACTOR: f64 = 2.0;
+
+/// Calculates the new interval by applying the backoff factor and taking the maximum into account.
+fn back_off(interval: u64) -> u64 {
+    let new_interval = (interval as f64 * BACKOFF_FACTOR) as u64;
+
+    new_interval.min(MAX_SLEEP_INTERVAL)
+}
+
 /// Main update loop that logs in and periodically acquires updates from the API.
 ///
 /// It updates the mutex-guarded current update [`Status`](crate::Status) struct which can be
@@ -23,9 +39,10 @@ pub(super) async fn update_loop(service: Services) -> color_eyre::Result<()> {
 
     let mut last_updated = 0;
     let poll_interval = service.poll_interval();
+    let mut sleep_interval = DEFAULT_SLEEP_INTERVAL;
     loop {
         // Wake up every 10 seconds and check if an update is due.
-        sleep(Duration::from_secs(10)).await;
+        sleep(Duration::from_secs(sleep_interval)).await;
 
         let timestamp = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)
@@ -39,15 +56,24 @@ pub(super) async fn update_loop(service: Services) -> color_eyre::Result<()> {
             Ok(status) => status,
             Err(Error::NotAuthorized) => {
                 eprintln!("💥 Update unauthorized, trying to log in again...");
-                service.login().await?;
+                if let Err(e) = service.login().await {
+                    eprintln!("💥 Login failed: {e}; will retry in {sleep_interval} seconds...");
+                    sleep_interval = back_off(sleep_interval);
+                    continue;
+                };
                 println!("⚡ Logged in successfully!");
+                sleep_interval = DEFAULT_SLEEP_INTERVAL;
                 continue;
             }
             Err(e) => {
-                eprintln!("💥 Failed to update status: {}", e);
+                eprintln!(
+                    "💥 Failed to update status: {e}; will retry in {sleep_interval} seconds..."
+                );
+                sleep_interval = back_off(sleep_interval);
                 continue;
             }
         };
+        sleep_interval = DEFAULT_SLEEP_INTERVAL;
         last_updated = timestamp;
 
         println!("⚡ Updated status to: {:#?}", status);
