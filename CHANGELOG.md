@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2023-04-15
+
+### Added
+
+* Implement backoff for login/update API call failures (#8)
+
+### Changed
+
+* Update dependencies
+* Speed up Docker image builds by using sparse Cargo index for crates.io
+
+### Fixed
+
+* Fix login errors not being detected for My Autarco
+* Fix missing build script/git repository during Docker image build
+
 ## [0.2.2] - 2023-03-22
 
 ### Added
@@ -65,7 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Rename Autarco Scraper project to Solar Grabber.
 
-[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.2.2...HEAD
+[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.0...HEAD
+[0.3.0]: https://git.luon.net/paul/solar-grabber/compare/v0.2.2...v0.3.0
 [0.2.2]: https://git.luon.net/paul/solar-grabber/compare/v0.2.1...v0.2.2
 [0.2.1]: https://git.luon.net/paul/solar-grabber/compare/v0.2.0...v0.2.1
 [0.2.0]: https://git.luon.net/paul/solar-grabber/compare/v0.1.1...v0.2.0
