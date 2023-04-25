@@ -1,4 +1,4 @@
-name: "Check, test and lint using Cargo"
+name: "Check and lint using Cargo"
 
 on:
   - pull_request
