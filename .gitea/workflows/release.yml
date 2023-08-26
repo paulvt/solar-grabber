@@ -2,7 +2,8 @@ name: "Release"
 
 on:
   push:
-    tags: "v*"
+    tags: 
+      - "v*"
 
 jobs:
   release:
@@ -20,22 +21,16 @@ jobs:
           echo "Releasing version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Install Rust stable toolchain
-        uses: https://github.com/actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
-      - name: Install cargo-deb
-        uses: https://github.com/brndnmtthws/rust-action-cargo-binstall@v1
-        with:
-          packages: cargo-deb
-
-      - name: Run cargo-deb
-        uses: https://github.com/actions-rs/cargo@v1
-        with:
-          command: deb
+      - name: Get the release notes from the changelog
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          RELEASE_NOTES=$(sed -n -e "/^## \[$VERSION\]/,/^## \[/{//"'!'"p;}" CHANGELOG.md | sed -e '1d;$d')
+          echo "Release notes:"
+          echo
+          echo "$RELEASE_NOTES"
+          echo "RELEASE_NOTES<<$EOF" >> "$GITHUB_ENV"
+          echo "$RELEASE_NOTES" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
 
       - name: Install Go
         uses: actions/setup-go@v4
@@ -47,11 +42,12 @@ jobs:
         with:
           # This is available by default.
           api_key: '${{ secrets.RELEASE_TOKEN }}'
-          files: target/debian/solar-grabber*.deb
+          files: FIXME
           title: 'Release ${{ env.VERSION }}'
+          body: '${{ env.RELEASE_NOTES }}'
 
   release-crate:
-    name: "Release crate"
+    name: "Release Rust crate"
     runs-on: debian-latest
     steps:
       - name: Checkout sources
@@ -82,7 +78,7 @@ jobs:
           args: --registry luon
 
   release-docker-image:
-    name: "Release Docker images"
+    name: "Release Docker image"
     runs-on: debian-latest
     container:
       image: ghcr.io/catthehacker/ubuntu:act-latest
