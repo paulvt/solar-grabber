@@ -24,7 +24,7 @@ RUN cargo build --release
 
 ########################## RUNTIME IMAGE ##########################
 # Create new stage with a minimal image for the actual runtime image/container
-FROM docker.io/debian:bullseye-slim
+FROM docker.io/debian:bookworm-slim
 
 # Install CA certificates
 RUN apt-get update && \
