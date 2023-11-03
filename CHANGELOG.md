@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2023-11-03
+
+### Security
+
+* Updated dependencies ([RUSTSEC-2020-0071](https://rustsec.org/advisories/RUSTSEC-2020-0071.html))
+
+### Changed
+
+* Switch to Rocket 0.5 RC4
+
 ## [0.3.2] - 2023-08-27
 
 ### Fixed
