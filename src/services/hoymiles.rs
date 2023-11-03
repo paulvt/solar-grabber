@@ -6,7 +6,7 @@
 
 use std::sync::Arc;
 
-use chrono::{DateTime, Local, TimeZone};
+use chrono::{DateTime, Local, NaiveDateTime, TimeZone};
 use md5::{Digest, Md5};
 use reqwest::{cookie::Jar as CookieJar, Client, ClientBuilder, Url};
 use rocket::{
@@ -133,9 +133,12 @@ where
     use rocket::serde::de::Error;
 
     let s = <&str>::deserialize(deserializer)?;
+    let dt = NaiveDateTime::parse_from_str(s, DATE_TIME_FORMAT).map_err(D::Error::custom)?;
+
     Local
-        .datetime_from_str(s, DATE_TIME_FORMAT)
-        .map_err(D::Error::custom)
+        .from_local_datetime(&dt)
+        .latest()
+        .ok_or_else(|| D::Error::custom("time representation is invalid for server time zone"))
 }
 
 /// Deserializes a string ([`&str`]) into a float ([`f32`]).
