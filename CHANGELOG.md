@@ -7,13 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.3.2]
+## [0.3.2] - 2023-08-27
 
 ### Fixed
 
 * Switch to Debian bookworm Docker image for runtime; fixes Docker image
 
-## [0.3.1]
+## [0.3.1] - 2023-08-26
 
 ### Changed
 
@@ -97,7 +97,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Rename Autarco Scraper project to Solar Grabber.
 
-[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.2...HEAD
+[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.3...HEAD
+[0.3.3]: https://git.luon.net/paul/solar-grabber/compare/v0.3.2...v0.3.3
 [0.3.2]: https://git.luon.net/paul/solar-grabber/compare/v0.3.1...v0.3.2
 [0.3.1]: https://git.luon.net/paul/solar-grabber/compare/v0.3.0...v0.3.1
 [0.3.0]: https://git.luon.net/paul/solar-grabber/compare/v0.2.2...v0.3.0
