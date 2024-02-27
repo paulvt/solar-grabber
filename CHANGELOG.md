@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.5] - 2024-02-27
+
+### Fixed
+
+* Fix clippy issue
+
 ## [0.3.4] - 2024-02-27
 
 ### Security
@@ -115,7 +121,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Rename Autarco Scraper project to Solar Grabber.
 
-[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.4...HEAD
+[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.5...HEAD
+[0.3.5]: https://git.luon.net/paul/solar-grabber/compare/v0.3.4...v0.3.5
 [0.3.4]: https://git.luon.net/paul/solar-grabber/compare/v0.3.3...v0.3.4
 [0.3.3]: https://git.luon.net/paul/solar-grabber/compare/v0.3.2...v0.3.3
 [0.3.2]: https://git.luon.net/paul/solar-grabber/compare/v0.3.1...v0.3.2
