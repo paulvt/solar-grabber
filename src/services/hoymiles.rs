@@ -112,7 +112,7 @@ where
     use rocket::serde::de::Error;
 
     match <StringOrObject<'_, T>>::deserialize(deserializer) {
-        Ok(StringOrObject::String(s)) if s.is_empty() => Ok(None),
+        Ok(StringOrObject::String("")) => Ok(None),
         Ok(StringOrObject::String(_)) => Err(Error::custom("Non-empty string not allowed here")),
         Ok(StringOrObject::Object(t)) => Ok(Some(t)),
         Ok(StringOrObject::Value(j)) => Err(Error::custom(&format!(
