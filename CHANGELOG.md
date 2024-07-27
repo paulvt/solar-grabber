@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.6] - 2024-07-27
+
+### Changed
+
+* Switch to Forgejo Actions; add audit workflow
+* Switch build dependency on `vergen` to `vergen-git2`
+
+### Security
+ 
+* Update dependencies; this fixes several security advisories:
+  * [RUSTSEC-2024-0019](https://rustsec.org/advisories/RUSTSEC-2024-0019)
+  * [RUSTSEC-2024-0332](https://rustsec.org/advisories/RUSTSEC-2024-0332)
+  * [RUSTSEC-2024-0357](https://rustsec.org/advisories/RUSTSEC-2024-0357)
+
 ## [0.3.5] - 2024-02-27
 
 ### Fixed
@@ -121,7 +135,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Rename Autarco Scraper project to Solar Grabber.
 
-[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.5...HEAD
+[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.6...HEAD
+[0.3.6]: https://git.luon.net/paul/solar-grabber/compare/v0.3.5...v0.3.6
 [0.3.5]: https://git.luon.net/paul/solar-grabber/compare/v0.3.4...v0.3.5
 [0.3.4]: https://git.luon.net/paul/solar-grabber/compare/v0.3.3...v0.3.4
 [0.3.3]: https://git.luon.net/paul/solar-grabber/compare/v0.3.2...v0.3.3
