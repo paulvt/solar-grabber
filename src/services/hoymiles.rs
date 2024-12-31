@@ -115,10 +115,9 @@ where
         Ok(StringOrObject::String("")) => Ok(None),
         Ok(StringOrObject::String(_)) => Err(Error::custom("Non-empty string not allowed here")),
         Ok(StringOrObject::Object(t)) => Ok(Some(t)),
-        Ok(StringOrObject::Value(j)) => Err(Error::custom(&format!(
-            "Undeserializable JSON object: {}",
-            j
-        ))),
+        Ok(StringOrObject::Value(j)) => {
+            Err(Error::custom(format!("Undeserializable JSON object: {j}",)))
+        }
 
         Err(err) => Err(err),
     }
