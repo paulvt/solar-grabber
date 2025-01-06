@@ -79,7 +79,7 @@ jobs:
 
       - name: Determine Docker metadata
         id: meta
-        uses: https://github.com/docker/metadata-action@v4
+        uses: https://github.com/docker/metadata-action@v5
         with:
           images: |
             git.luon.net/${{ github.repository }}
