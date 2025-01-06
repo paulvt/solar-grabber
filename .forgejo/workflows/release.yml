@@ -90,7 +90,7 @@ jobs:
             type=semver,pattern={{major}}
 
       - name: Login to the Forgejo container registry
-        uses: https://github.com/docker/login-action@v2
+        uses: https://github.com/docker/login-action@v3
         with:
           registry: git.luon.net
           username: ${{ github.repository_owner }}
