@@ -13,12 +13,12 @@ services:
       - ./Rocket.toml:/app/Rocket.toml
     environment:
       ROCKET_LOG_LEVEL: normal  # Available levels are: off, debug, normal, critical
-      # For My Autarco, use the these variabels and uncomment them
+      # For My Autarco, use the these variables and uncomment them
       # ROCKET_KIND: MyAutarco
       # ROCKET_USERNAME: foo@domain.tld
       # ROCKET_PASSWORD: secret
       # ROCKET_SITE_ID: abc123de
-      # For Hoymiles, use the these variabels and uncomment them
+      # For Hoymiles, use the these variables and uncomment them
       # ROCKET_KIND: HoyMiles
       # ROCKET_USERNAME: foo@domain.tld
       # ROCKET_PASSWORD: secret

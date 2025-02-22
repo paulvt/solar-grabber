@@ -61,7 +61,7 @@ pub(crate) trait Service {
     /// The interval between data polls (in seconds).
     fn poll_interval(&self) -> u64;
 
-    /// Perfoms a login on the cloud service (if necessary).
+    /// Performs a login on the cloud service (if necessary).
     async fn login(&mut self) -> Result<()>;
 
     /// Retrieves a status update using the API of the cloud service.

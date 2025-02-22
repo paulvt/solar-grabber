@@ -338,7 +338,7 @@ impl super::Service for Service {
             }
             Err(err) => return Err(err.into()),
         };
-        // Insert the token in the reponse data as the cookie `hm_token` into the cookie jar.
+        // Insert the token in the response data as the cookie `hm_token` into the cookie jar.
         let token_cookie = format!("hm_token={}", login_response_data.token);
         self.cookie_jar.add_cookie_str(&token_cookie, &base_url);
 
