@@ -21,7 +21,7 @@ use crate::{
 };
 
 /// The base URL of Hoymiles API gateway.
-const BASE_URL: &str = "https://global.hoymiles.com/platform/api/gateway";
+const BASE_URL: &str = "https://previous.hoymiles.com/platform/api/gateway";
 
 /// The date/time format used by the Hoymiles API.
 const DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
