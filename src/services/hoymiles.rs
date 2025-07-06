@@ -312,7 +312,7 @@ impl super::Service for Service {
         let login_url = login_url().expect("valid login URL");
 
         // Insert the cookie `hm_token_language` to specific the API language into the cookie jar.
-        let lang_cookie = format!("hm_token_language={}", LANGUAGE);
+        let lang_cookie = format!("hm_token_language={LANGUAGE}");
         self.cookie_jar.add_cookie_str(&lang_cookie, &base_url);
 
         let login_request = ApiLoginRequest::new(&self.config.username, &self.config.password);

@@ -76,7 +76,7 @@ pub(super) async fn update_loop(service: Services) -> color_eyre::Result<()> {
         sleep_interval = DEFAULT_SLEEP_INTERVAL;
         last_updated = timestamp;
 
-        println!("⚡ Updated status to: {:#?}", status);
+        println!("⚡ Updated status to: {status:#?}");
         let mut status_guard = STATUS.lock().expect("Status mutex was poisoned");
         status_guard.replace(status);
     }
