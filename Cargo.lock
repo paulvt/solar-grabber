@@ -1976,7 +1976,7 @@ dependencies = [
 
 [[package]]
 name = "solar-grabber"
-version = "0.3.8"
+version = "0.3.9"
 dependencies = [
  "chrono",
  "color-eyre",
