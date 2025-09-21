@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.9] - 2025-09-21
+
+### Changed
+
+* Enabled email notifications for all Forgejo Actions workflows
+
+### Security
+
+* Updated dependencies, fixes security advisory
+  [RUSTSEC-2025-0055](https://rustsec.org/advisories/RUSTSEC-2025-0055.html)
+
 ## [0.3.8] - 2025-04-09
 
 ### Fixed
@@ -168,7 +179,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Rename Autarco Scraper project to Solar Grabber.
 
-[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.8...HEAD
+[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.9...HEAD
+[0.3.9]: https://git.luon.net/paul/solar-grabber/compare/v0.3.8...v0.3.9
 [0.3.8]: https://git.luon.net/paul/solar-grabber/compare/v0.3.7...v0.3.8
 [0.3.7]: https://git.luon.net/paul/solar-grabber/compare/v0.3.6...v0.3.7
 [0.3.6]: https://git.luon.net/paul/solar-grabber/compare/v0.3.5...v0.3.6
