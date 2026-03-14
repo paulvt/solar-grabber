@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.10] - 2026-03-14
+
+### Changed
+ 
+* Update the build dependency on `vergen-git2`
+* Drop dependency on `vergen-git2`
+
+### Fixed
+
+* Add missing `form` feature for dependency on `reqwest`
+ 
+### Security
+ 
+* Updated dependencies, fixes security advisories:
+  * [RUSTSEC-2026-0008](https://rustsec.org/advisories/RUSTSEC-2026-0008.html)
+  * [RUSTSEC-2026-0037](https://rustsec.org/advisories/RUSTSEC-2026-0037.html)
+
 ## [0.3.9] - 2025-09-21
 
 ### Changed
@@ -179,7 +196,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Rename Autarco Scraper project to Solar Grabber.
 
-[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.9...HEAD
+[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.10...HEAD
+[0.3.10]: https://git.luon.net/paul/solar-grabber/compare/v0.3.9...v0.3.10
 [0.3.9]: https://git.luon.net/paul/solar-grabber/compare/v0.3.8...v0.3.9
 [0.3.8]: https://git.luon.net/paul/solar-grabber/compare/v0.3.7...v0.3.8
 [0.3.7]: https://git.luon.net/paul/solar-grabber/compare/v0.3.6...v0.3.7
