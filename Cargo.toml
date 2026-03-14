@@ -1,6 +1,6 @@
 [package]
 name = "solar-grabber"
-version = "0.3.10"
+version = "0.3.11"
 authors = ["Paul van Tilburg <paul@luon.net>"]
 edition = "2021"
 description = """"
