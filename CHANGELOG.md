@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.11] - 2026-03-14
+
+This release only corrects the Docker image build.
+
+### Fixed
+
+* Fix Docker container by switching to Debian 13 (Trixie) for the runtime image
+* Other small `Dockerfile` changes and improvements
+
 ## [0.3.10] - 2026-03-14
 
 ### Changed
@@ -196,7 +205,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Rename Autarco Scraper project to Solar Grabber.
 
-[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.10...HEAD
+[Unreleased]: https://git.luon.net/paul/solar-grabber/compare/v0.3.11...HEAD
+[0.3.11]: https://git.luon.net/paul/solar-grabber/compare/v0.3.10...v0.3.11
 [0.3.10]: https://git.luon.net/paul/solar-grabber/compare/v0.3.9...v0.3.10
 [0.3.9]: https://git.luon.net/paul/solar-grabber/compare/v0.3.8...v0.3.9
 [0.3.8]: https://git.luon.net/paul/solar-grabber/compare/v0.3.7...v0.3.8
