@@ -22,10 +22,9 @@ reqwest = { version = "0.13.0", features = ["cookies", "form", "json"] }
 rocket = { version = "0.5.0-rc.3", features = ["json"] }
 thiserror = "2.0.0"
 url = "2.2.2"
-vergen-git2 = "10.0.1"
 
 [build-dependencies]
-vergen-git2 = { version = "9.1.0", features = ["build"] }
+vergen-git2 = { version = "10.0.1", features = ["build"] }
 
 [package.metadata.deb]
 maintainer = "Paul van Tilburg <paul@luon.net>"
