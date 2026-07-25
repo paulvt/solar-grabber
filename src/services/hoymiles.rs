@@ -182,7 +182,8 @@ impl ApiLoginRequest {
         let user_name = username.to_owned();
         let mut hasher = Md5::new();
         hasher.update(password.as_bytes());
-        let password = format!("{:x}", hasher.finalize());
+        let md5_hash = hasher.finalize();
+        let password = format!("{:x}", base16ct::HexDisplay(&md5_hash));
 
         let body = ApiLoginRequestBody {
             user_name,
